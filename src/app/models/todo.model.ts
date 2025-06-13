@@ -4,4 +4,10 @@ export interface Todo {
     description: string;
     completed: boolean;
     createdAt: Date;
+    priority: 'low' | 'medium' | 'high';
+}
+
+export interface TodoFilter {
+    status: 'all' | 'completed' | 'pending';
+    priority?: 'low' | 'medium' | 'high';
 }

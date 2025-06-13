@@ -1,0 +1,92 @@
+<div class="add-todo">
+      <div class="form-header">
+        <h2>➕ Aggiungi Nuova Attività</h2>
+        <button 
+          class="toggle-btn"
+          (click)="toggleForm()"
+          [attr.aria-expanded]="showForm()"
+        >
+          {{ showForm() ? '✕' : '+' }}
+        </button>
+      </div>
+
+      @if (showForm()) {
+        <form [formGroup]="todoForm" (ngSubmit)="onSubmit()" class="todo-form">
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="title">Titolo *</label>
+              <input
+                type="text"
+                id="title"
+                formControlName="title"
+                placeholder="Cosa devi fare?"
+                [class.error]="isFieldInvalid('title')"
+              >
+              @if (isFieldInvalid('title')) {
+                <div class="error-message">
+                  @if (todoForm.get('title')?.errors?.['required']) {
+                    Il titolo è obbligatorio
+                  }
+                  @if (todoForm.get('title')?.errors?.['minlength']) {
+                    Il titolo deve avere almeno 3 caratteri
+                  }
+                  @if (todoForm.get('title')?.errors?.['maxlength']) {
+                    Il titolo non può superare i 100 caratteri
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="priority">Priorità</label>
+              <select id="priority" formControlName="priority">
+                <option value="low">🟢 Bassa</option>
+                <option value="medium">🟡 Media</option>
+                <option value="high">🔴 Alta</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">
+              Descrizione 
+              <span class="optional">(opzionale)</span>
+            </label>
+            <textarea
+              id="description"
+              formControlName="description"
+              placeholder="Aggiungi dettagli..."
+              rows="3"
+              [class.error]="isFieldInvalid('description')"
+            ></textarea>
+            @if (isFieldInvalid('description')) {
+              <div class="error-message">
+                La descrizione non può superare i 500 caratteri
+              </div>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="btn btn-primary"
+              [disabled]="todoForm.invalid || isSubmitting()"
+            >
+              @if (isSubmitting()) {
+                ⏳ Aggiungendo...
+              } @else {
+                ✅ Aggiungi Attività
+              }
+            </button>
+            
+            <button 
+              type="button" 
+              class="btn btn-secondary"
+              (click)="resetForm()"
+            >
+              🔄 Reset
+            </button>
+          </div>
+        </form>
+      }
+    </div>

@@ -1,0 +1,96 @@
+<div class="todo-list">
+    <div class="list-header">
+        <h2>📋 Le Mie Attività</h2>
+        <div class="stats">
+            <span class="stat">
+                <strong>{{ todoService.todoStats().total }}</strong> Totali
+            </span>
+            <span class="stat">
+                <strong>{{ todoService.todoStats().pending }}</strong> Da fare
+            </span>
+            <span class="stat">
+                <strong>{{ todoService.todoStats().completed }}</strong> Completate
+            </span>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <button class="filter-btn" [class.active]="todoService.filter().status === 'all'" (click)="setFilter('all')">
+            Tutte
+        </button>
+        <button class="filter-btn" [class.active]="todoService.filter().status === 'pending'"
+            (click)="setFilter('pending')">
+            Da fare
+        </button>
+        <button class="filter-btn" [class.active]="todoService.filter().status === 'completed'"
+            (click)="setFilter('completed')">
+            Completate
+        </button>
+    </div>
+
+    @if (todoService.filteredTodos().length > 0) {
+    <div class="todo-items">
+        @for (todo of todoService.filteredTodos(); track todo.id) {
+        <div class="todo-item" [class]="getTodoClasses(todo)">
+            <div class="todo-content">
+                <div class="todo-header">
+                    <h3>{{ todo.title }}</h3>
+                    <span class="priority-badge" [class]="'priority-' + todo.priority">
+                        {{ getPriorityLabel(todo.priority) }}
+                    </span>
+                </div>
+
+                @if (todo.description) {
+                <p class="description">{{ todo.description }}</p>
+                }
+
+                <div class="todo-meta">
+                    <small>{{ todo.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                </div>
+            </div>
+
+            <div class="todo-actions">
+                <button class="btn btn-toggle" [class.completed]="todo.completed" (click)="toggleTodo(todo.id)"
+                    [title]="todo.completed ? 'Segna come da fare' : 'Segna come completata'">
+                    @if (todo.completed) {
+                    ↺
+                    } @else {
+                    ✓
+                    }
+                </button>
+
+                <button class="btn btn-delete" (click)="deleteTodo(todo.id)" title="Elimina attività">
+                    🗑️
+                </button>
+            </div>
+        </div>
+        }
+    </div>
+
+    @if (todoService.todoStats().completed > 0) {
+    <div class="bulk-actions">
+        <button class="btn btn-clear" (click)="clearCompleted()">
+            Elimina tutte le completate ({{ todoService.todoStats().completed }})
+        </button>
+    </div>
+    }
+    } @else {
+    <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <h3>Nessuna attività trovata</h3>
+        <p>
+            @switch (todoService.filter().status) {
+            @case ('pending') {
+            Complimenti! Non hai attività in sospeso.
+            }
+            @case ('completed') {
+            Non hai ancora completato nessuna attività.
+            }
+            @default {
+            Inizia aggiungendo la tua prima attività!
+            }
+            }
+        </p>
+    </div>
+    }
+</div>
